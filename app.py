@@ -140,6 +140,3 @@ def delete():
     response.set_cookie("custom_tabs", encoded_custom_tabs)
 
     return response
-
-
-app.run(debug=True)
