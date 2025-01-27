@@ -1,0 +1,14 @@
+{% raw %}
+Hello {{ name }}!
+
+{% for result in results %}
+{% if result.score > 80 %}
+I'm happy to inform you that you did very well on today's {{ name }}.
+{% else %}
+I'm sorry to inform you that you did not do so well on today's {{ name }}.
+{% endif %}
+You reached {{ result.score }} out of {{ result.max_score }} points.
+{% endfor %}
+
+See you tomorrow!
+{% endraw %}

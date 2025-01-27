@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Jinja live parser</title>
+
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/convert.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tab.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap-5.3.3-dist/css/bootstrap.min.css') }}" />
+</head>
+
+<body class="bg-light">
+
+<div class="container-fluid row mt-5">
+    <input type="hidden" id="tab-id" />
+    <div class="col-md-3">
+        <label class="form-label fw-bold fs-5" for="favorites">Favorites <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
+            <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z"/>
+          </svg></label>
+        <ul class="list-group">
+            {% for tab in tabs %}
+            <li class="list-group-item display-tab" role="button" data-tab-id="{{ loop.index - 1 }}">
+                {{ tab.title }}
+                <button class="btn btn-danger btn-sm float-end delete-tab" data-tab-id="{{ loop.index - 1 }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                    </svg>
+                </button>
+            </li>
+            {% endfor %}
+            <li class="list-group-item">
+                <div class="input-group mb-3">
+                    <input type="text" id="new_title" class="form-control" placeholder="Title" aria-label="Title" aria-describedby="add">
+                    <span class="input-group-text" role="button" id="add">Add</span>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <form class="col-md-9 bg-white shadow p-5 rounded-3" id="form">
+        <div class="row">
+            <div class="col-md-12 mt-4">
+                <label class="form-label fw-bold fs-5" for="template">Title</label>
+                <input type="text" class="form-control" id="title" {% if title is defined %} value="{{title}}" disabled {% endif %}/>
+            </div>
+            <div class="col-md-6">
+                <div class="row mt-3">
+                    <label class="form-label fw-bold fs-5" for="template">Template</label>
+                    <textarea class="form-control" id="template" rows="15">{% include 'example_template.html' %}</textarea>
+                </div>
+                <div class="row mt-3">
+                    <label class="form-label fw-bold fs-5" for="values">Values</label>
+                    <textarea class="form-control" id="values" rows="15">{% include 'example_values.html' %}</textarea>
+                </div>
+            </div>
+            <div class="col-md-6 mt-3">
+                <div class="row mt-3">
+                    <label class="form-label fw-bold fs-5" for="settings">Settings</label>
+                    <div class="form-check ms-4">
+                        <input class="form-check-input" type="radio" name="type" id="json" value="json">
+                        <label class="form-check-label" for="json">
+                            JSON
+                        </label>
+                    </div>
+                    <div class="form-check ms-4">
+                        <input class="form-check-input" type="radio" name="type" id="yaml" value="yaml" checked>
+                        <label class="form-check-label" for="yaml">
+                            YAML
+                        </label>
+                    </div>
+                    <div class="btn-group mt-3 px-3" role="group" aria-label="Button">
+                        <input type="button" class="btn btn-success" id="convert" value="Convert" />
+                        <input type="button" class="btn btn-danger" id="clear" value="Clear" />
+                        <input type="button" class="btn btn-primary" id="save" value="Save" />    
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <label class="form-label fw-bold fs-5" for="render">Render</label>
+                    <div id="render" class="card card-body"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
+</html>
