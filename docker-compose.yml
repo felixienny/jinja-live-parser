@@ -1,0 +1,15 @@
+services:
+  web:
+    image: fienny/jinja-live-parser
+    volumes:
+      - .:/app
+    expose:
+      - 8125
+    networks:
+      - web
+    labels:
+      - traefik.frontend.rule=Host:jinja-live-parser.localhost
+
+networks:
+  web:
+    external: true
